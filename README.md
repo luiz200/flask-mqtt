@@ -7,3 +7,7 @@
 ### windows: .\venv\Scripts\activate
 
 ### Linux: source venv/bin/activate
+
+## install to libraries: 
+
+### pip install -r requirements.txt
