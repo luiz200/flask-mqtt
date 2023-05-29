@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>MQTT Messages</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            setInterval(function() {
+        $(document).ready(function () {
+            setInterval(function () {
                 $.ajax({
                     url: "/get_latest_message",
                     type: "GET",
-                    success: function(data) {
+                    success: function (data) {
                         $("#temperature").text(data.message.temperature);
                         $("#luminosity").text(data.message.luminosity);
                     }
@@ -21,39 +22,42 @@
         $(document).ready(function() {
             $("#led-toggle-btn").click(function() {
                 var currentStatus = $(this).data("status");
-                var newStatus = currentStatus === "on" ? "off" : "on";
-                sendCommand("/botao", newStatus);
-                $(this).data("status", newStatus);
-                $(this).text("Turn LED " + newStatus.toUpperCase());
+
+                if (currentStatus === "on") {
+                    sendCommand("/botao", "0", "Turn LED On");
+                    $(this).data("status", "off");
+                } else {
+                    sendCommand("/botao", "1", "Turn LED Off");
+                    $(this).data("status", "on");
+                }
             });
-    
-            function sendCommand(topic, msg) {
-                var data = {
-                    "topic": topic,
-                    "msg": msg
-                };
-    
+
+            function sendCommand(topic, msg, buttonText) {
+                var command = { "topic": topic, "msg": msg };
+
                 $.ajax({
                     type: "POST",
                     url: "/publish",
-                    data: JSON.stringify(data),
                     contentType: "application/json",
-                    dataType: "json",
-                    success: function(response) {
+                    data: JSON.stringify(command),
+                    success: function() {
                         console.log("Command sent successfully");
+                        $("#led-toggle-btn").text(buttonText);
                     },
-                    error: function(error) {
-                        console.log("Error sending command: " + error);
+                    error: function(xhr, status, error) {
+                        console.error("Error sending command: " + error);
                     }
                 });
             }
         });
     </script>
 </head>
+
 <body>
     <h1>MQTT Messages</h1>
     <h3>Temperature: <span id="temperature"></span></h3>
     <h3>Luminosity: <span id="luminosity"></span></h3>
     <button id="led-toggle-btn">Toggle LED</button>
 </body>
+
 </html>

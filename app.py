@@ -6,8 +6,8 @@ app = Flask(__name__)
 
 app.config['MQTT_BROKER_URL'] = 'broker.emqx.io'
 app.config['MQTT_BROKER_PORT'] = 1883
-app.config['MQTT_USERNAME'] = 'you_username'
-app.config['MQTT_PASSWORD'] = 'you_password'
+app.config['MQTT_USERNAME'] = 'esp32'
+app.config['MQTT_PASSWORD'] = '12345'
 app.config['MQTT_KEEPALIVE'] = 1
 app.config['MQTT_TLS_ENABLED'] = False
 topic = "/botao"
@@ -133,6 +133,15 @@ def get_latest_message():
         }
     })
 
+@app.route('/botao', methods=['POST'])
+def toggle_led():
+    new_status = request.get_json()['msg']
+    
+    if new_status == '1':
+        print('LED turned on')
+
+    elif new_status == '0':
+        print('LED turned off')
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)
