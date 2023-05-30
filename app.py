@@ -1,13 +1,14 @@
 from flask import Flask, request, jsonify, render_template
 from flask_mqtt import Mqtt
 import ujson
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 
 app.config['MQTT_BROKER_URL'] = 'broker.emqx.io'
 app.config['MQTT_BROKER_PORT'] = 1883
-app.config['MQTT_USERNAME'] = 'esp32'
-app.config['MQTT_PASSWORD'] = '12345'
+app.config['MQTT_USERNAME'] = 'you_username'
+app.config['MQTT_PASSWORD'] = 'you_password'
 app.config['MQTT_KEEPALIVE'] = 1
 app.config['MQTT_TLS_ENABLED'] = False
 topic = "/botao"
@@ -135,6 +136,14 @@ def get_latest_message():
 
 @app.route('/botao', methods=['POST'])
 def toggle_led():
+    """
+    The toggle_led function is a ReST endpoint that accepts JSON data.
+    The JSON data must contain the key 'msg' and the value of 'msg' must be either 1 or 0.
+    If msg == 1, then print('LED turned on') to console. If msg == 0, then print('LED turned off') to console.
+    
+    :return: A string, which is the new status of the led
+    :doc-author: Trelent
+    """
     new_status = request.get_json()['msg']
     
     if new_status == '1':
